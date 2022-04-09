@@ -6,7 +6,3 @@
   box-sizing: border-box;
   font-family: 'Ubuntu', sans-serif;
 }
-
-canvas {
-  border: solid 1px red;
-}
