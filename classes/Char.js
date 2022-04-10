@@ -48,13 +48,18 @@ export class Char {
     switch (direction) {
       case 'right':
         this.flipImage = false;
-        this.position.x += this.velocity.x;
+
+        if (this.position.x < canvas.width / 2)
+          this.position.x += this.velocity.x;
+
         this.frame.position.y = this.frame.run.y;
         this.frame.position.amount = this.frame.run.amount;
         break;
       case 'left':
         this.flipImage = true;
-        this.position.x -= this.velocity.x;
+
+        if (this.position.x >= 50) this.position.x -= this.velocity.x;
+
         this.frame.position.y = this.frame.run.y;
         this.frame.position.amount = this.frame.run.amount;
         break;

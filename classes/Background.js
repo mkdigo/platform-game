@@ -52,7 +52,7 @@ export class Background {
     );
   }
 
-  update({ keys }) {
+  update({ keys, playerPositionX }) {
     // 3 for remove the gap
     if (this.bg1.position.x < -this.width * 2)
       this.bg1.position.x = this.width - 3;
@@ -68,11 +68,11 @@ export class Background {
     if (this.bg3.position.x > this.width * 2)
       this.bg3.position.x = -this.width + 3;
 
-    if (keys.d.pressed) {
+    if (keys.d.pressed && playerPositionX >= canvas.width / 2) {
       this.bg1.position.x -= this.velocity.x;
       this.bg2.position.x -= this.velocity.x;
       this.bg3.position.x -= this.velocity.x;
-    } else if (keys.a.pressed) {
+    } else if (keys.a.pressed && playerPositionX < 50) {
       this.bg1.position.x += this.velocity.x;
       this.bg2.position.x += this.velocity.x;
       this.bg3.position.x += this.velocity.x;

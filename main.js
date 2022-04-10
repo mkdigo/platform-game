@@ -12,7 +12,7 @@ var backgrounds = [];
 function gameStart() {
   player = new Char({
     position: {
-      x: 100,
+      x: 200,
       y: 400,
     },
     width: 150,
@@ -113,7 +113,7 @@ function animate() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   backgrounds.forEach((background) => {
-    background.update({ keys: playerKeys });
+    background.update({ keys: playerKeys, playerPositionX: player.position.x });
   });
 
   player.update({ animationId, keys: playerKeys });
