@@ -27,10 +27,10 @@ export class Char {
 
   setHitBox() {
     this.hitBox = {
-      x: this.position.x + 35,
-      y: this.position.y + 50,
-      w: 40,
-      h: 60,
+      x: this.position.x + this.width / 3,
+      y: this.position.y + this.height / 2 - 10,
+      w: this.width / 3,
+      h: this.height / 2 + 10,
     };
   }
 
@@ -67,15 +67,15 @@ export class Char {
   }
 
   draw() {
-    ctx.fillStyle = '#033';
-    ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
+    // ctx.fillStyle = '#033';
+    // ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
 
     ctx.save();
     if (this.flipImage) ctx.scale(-1, 1);
     ctx.drawImage(
       this.image,
       this.frame.size.x * this.frame.position.x,
-      this.frame.size.y * this.frame.position.y,
+      this.frame.size.y * this.frame.position.y + 1,
       this.frame.size.x,
       this.frame.size.y,
       this.flipImage ? -this.position.x - this.width : this.position.x,

@@ -1,11 +1,13 @@
 import { Char } from './classes/Char.js';
+import { Background } from './classes/Background.js';
 import { createImage, useCanvas } from './helpers.js';
 
 const { canvas, ctx } = useCanvas();
-canvas.width = 1200;
-canvas.height = 640;
+canvas.width = 900;
+canvas.height = 560;
 
 var player;
+var backgrounds = [];
 
 function gameStart() {
   player = new Char({
@@ -13,8 +15,8 @@ function gameStart() {
       x: 100,
       y: 400,
     },
-    width: 110,
-    height: 110,
+    width: 150,
+    height: 150,
     image: createImage('./assets/player/1.png'),
     frame: {
       size: {
@@ -68,6 +70,30 @@ function gameStart() {
     },
   });
 
+  backgrounds = [
+    new Background({
+      velocity: {
+        x: 1,
+        y: 0,
+      },
+      image: createImage('./assets/background/1.png'),
+    }),
+    new Background({
+      velocity: {
+        x: 2,
+        y: 0,
+      },
+      image: createImage('./assets/background/2.png'),
+    }),
+    new Background({
+      velocity: {
+        x: 3,
+        y: 0,
+      },
+      image: createImage('./assets/background/3.png'),
+    }),
+  ];
+
   animate();
 }
 
@@ -85,6 +111,10 @@ function animate() {
 
   ctx.fillStyle = '#666';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  backgrounds.forEach((background) => {
+    background.update({ keys: playerKeys });
+  });
 
   player.update({ animationId, keys: playerKeys });
 }
