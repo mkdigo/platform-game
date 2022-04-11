@@ -2,7 +2,6 @@ import config from '../config.js';
 import { useCanvas } from '../helpers.js';
 
 const { canvas, ctx } = useCanvas();
-const gravity = 5;
 
 export class Char {
   constructor({ position, width, height, image, frame }) {

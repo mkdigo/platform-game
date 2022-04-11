@@ -2,6 +2,7 @@ import { Char } from './classes/Char.js';
 import { Background } from './classes/Background.js';
 import { createImage, useCanvas } from './helpers.js';
 import { Tileset } from './classes/Tileset.js';
+import config from './config.js';
 
 const { canvas, ctx } = useCanvas();
 canvas.width = 900;
@@ -16,7 +17,7 @@ function gameStart() {
   player = new Char({
     position: {
       x: 200,
-      y: 350,
+      y: 50,
     },
     width: 150,
     height: 150,
@@ -97,17 +98,17 @@ function gameStart() {
     }),
   ];
 
-  const addGround = () => {
+  const addGround = ({ gap, up } = { gap: 0, up: 0 }) => {
     tilesets.push(
       new Tileset({
         element: 'ground',
         position: {
-          x: mapSize,
-          y: canvas.height,
+          x: mapSize + gap,
+          y: canvas.height - up,
         },
       })
     );
-    mapSize += 50 * 3 - 2;
+    mapSize += 50 * 3 - 2 + gap;
   };
   addGround();
   addGround();
@@ -116,17 +117,7 @@ function gameStart() {
   addGround();
   addGround();
   addGround();
-  // addGround();
-
-  // tilesets = [
-  //   new Tileset({
-  //     element: 'ground',
-  //     position: {
-  //       x: 0,
-  //       y: canvas.height,
-  //     },
-  //   }),
-  // ];
+  addGround();
 
   animate();
 }
@@ -146,6 +137,11 @@ function animate() {
   ctx.fillStyle = '#666';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // Gravity
+  player.position.y += player.velocity.y;
+  player.velocity.y += config.gravity;
+
+  //Backgrounds
   backgrounds.forEach((background) => {
     background.update({
       keys: playerKeys,
@@ -154,12 +150,25 @@ function animate() {
     });
   });
 
+  // Tilesets
   tilesets.forEach((tileset) => {
     tileset.update({
       keys: playerKeys,
       playerPositionX: player.position.x,
       mapSize,
     });
+
+    // Player collision
+    if (
+      player.position.y + player.height + player.velocity.y >=
+        tileset.position.y + 2 &&
+      player.position.y + player.height + player.velocity.y <=
+        tileset.position.y + 20 &&
+      player.hitBox.x + player.hitBox.w >= tileset.position.x &&
+      player.hitBox.x <= tileset.position.x + tileset.width
+    ) {
+      player.velocity.y = 0;
+    }
   });
 
   player.update({ animationId, keys: playerKeys });
