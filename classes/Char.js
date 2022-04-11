@@ -1,3 +1,4 @@
+import config from '../config.js';
 import { useCanvas } from '../helpers.js';
 
 const { canvas, ctx } = useCanvas();
@@ -7,8 +8,8 @@ export class Char {
   constructor({ position, width, height, image, frame }) {
     this.position = position;
     this.velocity = {
-      x: 3,
-      y: 5,
+      x: config.player.velocity.x,
+      y: config.player.velocity.y,
     };
     this.width = width;
     this.height = height;

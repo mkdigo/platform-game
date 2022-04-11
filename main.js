@@ -1,6 +1,7 @@
 import { Char } from './classes/Char.js';
 import { Background } from './classes/Background.js';
 import { createImage, useCanvas } from './helpers.js';
+import { Tileset } from './classes/Tileset.js';
 
 const { canvas, ctx } = useCanvas();
 canvas.width = 900;
@@ -8,12 +9,14 @@ canvas.height = 560;
 
 var player;
 var backgrounds = [];
+var tilesets = [];
+var mapSize = 0;
 
 function gameStart() {
   player = new Char({
     position: {
       x: 200,
-      y: 400,
+      y: 350,
     },
     width: 150,
     height: 150,
@@ -94,6 +97,37 @@ function gameStart() {
     }),
   ];
 
+  const addGround = () => {
+    tilesets.push(
+      new Tileset({
+        element: 'ground',
+        position: {
+          x: mapSize,
+          y: canvas.height,
+        },
+      })
+    );
+    mapSize += 50 * 3 - 2;
+  };
+  addGround();
+  addGround();
+  addGround();
+  addGround();
+  addGround();
+  addGround();
+  addGround();
+  // addGround();
+
+  // tilesets = [
+  //   new Tileset({
+  //     element: 'ground',
+  //     position: {
+  //       x: 0,
+  //       y: canvas.height,
+  //     },
+  //   }),
+  // ];
+
   animate();
 }
 
@@ -113,7 +147,19 @@ function animate() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   backgrounds.forEach((background) => {
-    background.update({ keys: playerKeys, playerPositionX: player.position.x });
+    background.update({
+      keys: playerKeys,
+      playerPositionX: player.position.x,
+      mapSize,
+    });
+  });
+
+  tilesets.forEach((tileset) => {
+    tileset.update({
+      keys: playerKeys,
+      playerPositionX: player.position.x,
+      mapSize,
+    });
   });
 
   player.update({ animationId, keys: playerKeys });
