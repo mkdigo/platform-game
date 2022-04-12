@@ -118,6 +118,8 @@ function gameStart() {
   addGround();
   addGround();
   addGround();
+  addGround();
+  addGround();
 
   animate();
 }
@@ -130,6 +132,9 @@ const playerKeys = {
     pressed: false,
   },
   space: {
+    pressed: false,
+  },
+  j: {
     pressed: false,
   },
 };
@@ -149,6 +154,7 @@ function animate() {
     background.update({
       keys: playerKeys,
       playerPositionX: player.position.x,
+      isPlayerAttacking: player.isAttacking,
       mapSize,
     });
   });
@@ -158,6 +164,7 @@ function animate() {
     tileset.update({
       keys: playerKeys,
       playerPositionX: player.position.x,
+      isPlayerAttacking: player.isAttacking,
       mapSize,
     });
 

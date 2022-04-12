@@ -54,7 +54,7 @@ export class Background {
     );
   }
 
-  update({ keys, playerPositionX, mapSize }) {
+  update({ keys, playerPositionX, isPlayerAttacking, mapSize }) {
     // 3 for remove the gap
     if (this.bg1.position.x < -this.width * 2)
       this.bg1.position.x = this.width - 3;
@@ -73,14 +73,20 @@ export class Background {
     if (
       this.mapPosition < mapSize - canvas.width &&
       keys.d.pressed &&
-      playerPositionX >= canvas.width / 2
+      playerPositionX >= canvas.width / 2 &&
+      !isPlayerAttacking
     ) {
       // Player moving to right
       this.mapPosition += config.player.velocity.x;
       this.bg1.position.x -= this.velocity.x;
       this.bg2.position.x -= this.velocity.x;
       this.bg3.position.x -= this.velocity.x;
-    } else if (this.mapPosition > 0 && keys.a.pressed && playerPositionX < 50) {
+    } else if (
+      this.mapPosition > 0 &&
+      keys.a.pressed &&
+      playerPositionX < 50 &&
+      !isPlayerAttacking
+    ) {
       // Player moving to left
       this.mapPosition -= config.player.velocity.x;
       this.bg1.position.x += this.velocity.x;

@@ -25,6 +25,7 @@ export class Char {
     this.setHitBox();
 
     this.isJumping = false;
+    this.isAttacking = false;
     this.lastMove = '';
   }
 
@@ -53,6 +54,7 @@ export class Char {
         if (this.lastMove !== 'right') {
           this.lastMove = 'right';
           if (!this.isJumping) {
+            this.frame.position.x = 0;
             this.frame.position.y = this.frame.run.y;
             this.frame.position.amount = this.frame.run.amount;
           }
@@ -66,6 +68,7 @@ export class Char {
         if (this.lastMove !== 'left') {
           this.lastMove = 'left';
           if (!this.isJumping) {
+            this.frame.position.x = 0;
             this.frame.position.y = this.frame.run.y;
             this.frame.position.amount = this.frame.run.amount;
           }
@@ -87,6 +90,15 @@ export class Char {
       case 'fall':
         if (this.lastMove !== 'fall') {
           this.lastMove = 'fall';
+        }
+        break;
+      case 'attack':
+        if (!this.isAttacking) {
+          this.lastMove = 'attack';
+          this.isAttacking = true;
+          this.frame.position.x = 0;
+          this.frame.position.y = this.frame.attack.y;
+          this.frame.position.amount = this.frame.attack.amount;
         }
         break;
       default:
@@ -120,11 +132,11 @@ export class Char {
 
   update({ animationId, keys }) {
     // Moviments
-
-    if (keys.d.pressed) this.move('right');
-    else if (keys.a.pressed) this.move('left');
+    if (keys.j.pressed) this.move('attack');
+    else if (keys.d.pressed && !this.isAttacking) this.move('right');
+    else if (keys.a.pressed && !this.isAttacking) this.move('left');
     else {
-      if (!this.isJumping) this.move('stop');
+      if (!this.isJumping && !this.isAttacking) this.move('stop');
     }
 
     if (keys.space.pressed) this.move('jump');
@@ -134,9 +146,20 @@ export class Char {
     }
 
     // Frames
-    if (this.isJumping) {
-      if (this.frame.position.x < this.frame.position.amount - 1)
-        this.frame.position.x++;
+    if (this.isJumping || this.isAttacking) {
+      if (this.frame.position.x < this.frame.position.amount - 1) {
+        if (this.isAttacking) {
+          if (animationId % 6 === 0) this.frame.position.x++;
+          if (this.frame.position.x === this.frame.position.amount - 1)
+            this.isAttacking = false;
+        } else this.frame.position.x++;
+      }
+
+      if (
+        this.isAttacking &&
+        this.frame.position.x === this.frame.position.amount - 1
+      )
+        this.isAttacking = false;
     } else {
       if (animationId % 6 === 0) this.frame.position.x++;
 
