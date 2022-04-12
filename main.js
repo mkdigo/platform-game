@@ -129,6 +129,9 @@ const playerKeys = {
   d: {
     pressed: false,
   },
+  space: {
+    pressed: false,
+  },
 };
 
 function animate() {
@@ -163,11 +166,12 @@ function animate() {
       player.position.y + player.height + player.velocity.y >=
         tileset.position.y + 2 &&
       player.position.y + player.height + player.velocity.y <=
-        tileset.position.y + 20 &&
+        tileset.position.y + 30 &&
       player.hitBox.x + player.hitBox.w >= tileset.position.x &&
       player.hitBox.x <= tileset.position.x + tileset.width
     ) {
       player.velocity.y = 0;
+      player.isJumping = false;
     }
   });
 
@@ -177,9 +181,11 @@ function animate() {
 gameStart();
 
 document.addEventListener('keydown', ({ key }) => {
+  if (key === ' ') key = 'space';
   if (Object.keys(playerKeys).includes(key)) playerKeys[key].pressed = true;
 });
 
 document.addEventListener('keyup', ({ key }) => {
+  if (key === ' ') key = 'space';
   if (Object.keys(playerKeys).includes(key)) playerKeys[key].pressed = false;
 });

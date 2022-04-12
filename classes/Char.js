@@ -23,6 +23,9 @@ export class Char {
     };
 
     this.setHitBox();
+
+    this.isJumping = false;
+    this.lastMove = '';
   }
 
   setHitBox() {
@@ -39,11 +42,6 @@ export class Char {
     this.frame.position.amount = this.frame.attack.amount;
   }
 
-  run() {
-    this.frame.position.y = this.frame.run.y;
-    this.frame.position.amount = this.frame.run.amount;
-  }
-
   move(direction) {
     switch (direction) {
       case 'right':
@@ -52,18 +50,47 @@ export class Char {
         if (this.position.x < canvas.width / 2)
           this.position.x += this.velocity.x;
 
-        this.frame.position.y = this.frame.run.y;
-        this.frame.position.amount = this.frame.run.amount;
+        if (this.lastMove !== 'right') {
+          this.lastMove = 'right';
+          if (!this.isJumping) {
+            this.frame.position.y = this.frame.run.y;
+            this.frame.position.amount = this.frame.run.amount;
+          }
+        }
         break;
       case 'left':
         this.flipImage = true;
 
         if (this.position.x >= 50) this.position.x -= this.velocity.x;
 
-        this.frame.position.y = this.frame.run.y;
-        this.frame.position.amount = this.frame.run.amount;
+        if (this.lastMove !== 'left') {
+          this.lastMove = 'left';
+          if (!this.isJumping) {
+            this.frame.position.y = this.frame.run.y;
+            this.frame.position.amount = this.frame.run.amount;
+          }
+        }
+        break;
+      case 'jump':
+        if (this.velocity.y === 0) {
+          this.isJumping = true;
+          this.velocity.y = -17;
+          this.frame.position.x = 0;
+
+          if (this.lastMove !== 'jump') {
+            this.lastMove = 'jump';
+            this.frame.position.y = this.frame.jump.y;
+            this.frame.position.amount = this.frame.jump.amount;
+          }
+        }
+        break;
+      case 'fall':
+        if (this.lastMove !== 'fall') {
+          this.lastMove = 'fall';
+        }
         break;
       default:
+        this.lastMove = 'stop';
         this.frame.position.y = this.frame.idle.y;
         this.frame.position.amount = this.frame.idle.amount;
     }
@@ -93,15 +120,30 @@ export class Char {
 
   update({ animationId, keys }) {
     // Moviments
+
     if (keys.d.pressed) this.move('right');
     else if (keys.a.pressed) this.move('left');
-    else this.move('stop');
+    else {
+      if (!this.isJumping) this.move('stop');
+    }
+
+    if (keys.space.pressed) this.move('jump');
+
+    if (this.isJumping && this.velocity.y > 0) {
+      this.move('fall');
+    }
 
     // Frames
-    if (this.frame.position.x >= this.frame.position.amount)
-      this.frame.position.x = 0;
+    if (this.isJumping) {
+      if (this.frame.position.x < this.frame.position.amount - 1)
+        this.frame.position.x++;
+    } else {
+      if (animationId % 6 === 0) this.frame.position.x++;
+
+      if (this.frame.position.x >= this.frame.position.amount)
+        this.frame.position.x = 0;
+    }
 
     this.draw();
-    if (animationId % 6 === 0) this.frame.position.x++;
   }
 }
