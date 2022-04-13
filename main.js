@@ -1,7 +1,9 @@
 import { Char } from './classes/Char.js';
 import { Background } from './classes/Background.js';
-import { createImage, useCanvas } from './helpers.js';
 import { Tileset } from './classes/Tileset.js';
+import { Emblem } from './classes/Emblem.js';
+
+import { collision, createImage, useCanvas } from './helpers.js';
 import config from './config.js';
 
 const { canvas, ctx } = useCanvas();
@@ -11,7 +13,9 @@ canvas.height = 560;
 var player;
 var backgrounds = [];
 var tilesets = [];
+var emblems = [];
 var mapSize = 0;
+var emblemPosition = 10;
 
 function gameStart() {
   player = new Char({
@@ -99,6 +103,10 @@ function gameStart() {
   ];
 
   const addGround = ({ gap, up } = { gap: 0, up: 0 }) => {
+    // max gap: 180
+    if (!gap) gap = 0;
+    if (!up) up = 0;
+
     tilesets.push(
       new Tileset({
         element: 'ground',
@@ -110,31 +118,80 @@ function gameStart() {
     );
     mapSize += 50 * 3 - 2 + gap;
   };
+
+  const addEmblem = ({ gap, up, imageUrl, scale, fixedPositionY }) => {
+    if (!gap) gap = 0;
+    if (!up) up = 150;
+    else up = up + 150;
+    if (!scale) scale = 1;
+
+    emblems.push(
+      new Emblem({
+        position: {
+          x: mapSize + gap,
+          y: canvas.height - up,
+        },
+        image: createImage(imageUrl),
+        scale,
+        fixedPositionY,
+      })
+    );
+  };
+
+  addGround();
+  addGround();
+  addGround();
+  addGround({ gap: 100 });
+  addEmblem({
+    imageUrl: './assets/emblems/html.png',
+    gap: -35,
+    fixedPositionY: 7,
+    scale: 1.25,
+  });
+  addGround();
+  addGround({ gap: 100, up: 50 });
+  addGround({ gap: 100, up: 150 });
+  addEmblem({
+    imageUrl: './assets/emblems/css.png',
+    gap: 80,
+    up: 260,
+    fixedPositionY: 7,
+    scale: 1.25,
+  });
+  addGround({ gap: 180 });
+
   addGround();
   addGround();
   addGround();
   addGround();
   addGround();
-  addGround();
-  addGround();
-  addGround();
-  addGround();
-  addGround();
+
+  // addEmblem({ imageUrl: './assets/emblems/js.png' });
+  // addEmblem({ imageUrl: './assets/emblems/ts.png' });
+  // addEmblem({ imageUrl: './assets/emblems/react.png' });
+  // addEmblem({ imageUrl: './assets/emblems/php.png' });
+  // addEmblem({ imageUrl: './assets/emblems/laravel.png' });
+  // addEmblem({ imageUrl: './assets/emblems/mysql.png' });
+  // addEmblem({ imageUrl: './assets/emblems/github.png' });
 
   animate();
 }
 
 const playerKeys = {
   a: {
+    // Left
     pressed: false,
   },
   d: {
+    // Right
     pressed: false,
   },
-  space: {
+  k: {
+    // Attack
     pressed: false,
   },
   j: {
+    // Jump
     pressed: false,
   },
 };
@@ -179,6 +236,33 @@ function animate() {
     ) {
       player.velocity.y = 0;
       player.isJumping = false;
+    }
+  });
+
+  emblems.forEach((emblem) => {
+    emblem.update({
+      keys: playerKeys,
+      playerPositionX: player.position.x,
+      isPlayerAttacking: player.isAttacking,
+      mapSize,
+    });
+
+    // Player collision
+    if (
+      collision({
+        ax: player.hitBox.x,
+        ay: player.hitBox.y,
+        aw: player.hitBox.w,
+        ah: player.hitBox.h,
+        bx: emblem.position.x,
+        by: emblem.position.y,
+        bw: emblem.width,
+        bh: emblem.height,
+      }) &&
+      !emblem.isFixed
+    ) {
+      emblem.get(emblemPosition);
+      emblemPosition += emblem.width + 10;
     }
   });
 

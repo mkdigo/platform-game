@@ -9,3 +9,7 @@ export function createImage(src) {
   image.src = String(src);
   return image;
 }
+
+export function collision({ ax, ay, aw, ah, bx, by, bw, bh }) {
+  return ax + aw >= bx && ax <= bx + bw && ay + ah >= by && ay <= by + bh;
+}

@@ -132,14 +132,14 @@ export class Char {
 
   update({ animationId, keys }) {
     // Moviments
-    if (keys.j.pressed) this.move('attack');
+    if (keys.k.pressed) this.move('attack');
     else if (keys.d.pressed && !this.isAttacking) this.move('right');
     else if (keys.a.pressed && !this.isAttacking) this.move('left');
     else {
       if (!this.isJumping && !this.isAttacking) this.move('stop');
     }
 
-    if (keys.space.pressed) this.move('jump');
+    if (keys.j.pressed) this.move('jump');
 
     if (this.isJumping && this.velocity.y > 0) {
       this.move('fall');

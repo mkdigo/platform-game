@@ -31,9 +31,6 @@ export class Tileset {
   }
 
   draw() {
-    // ctx.fillStyle = '#099';
-    // ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
-
     ctx.drawImage(
       this.image,
       24 * this.block.x,
