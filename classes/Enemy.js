@@ -235,10 +235,12 @@ export class Enemy {
 
     if (mapMovingLeft) {
       this.position.x += config.player.velocity.x;
-      this.emblem.position.x += config.player.velocity.x;
+      if (!this.emblem.isFixed)
+        this.emblem.position.x += config.player.velocity.x;
     } else if (mapMovingRight) {
       this.position.x -= config.player.velocity.x;
-      this.emblem.position.x -= config.player.velocity.x;
+      if (!this.emblem.isFixed)
+        this.emblem.position.x -= config.player.velocity.x;
     }
 
     if (animationId % this.frame.hold === 0) this.frame.current++;
