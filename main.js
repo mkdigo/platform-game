@@ -17,6 +17,9 @@ var backgrounds = [];
 var tilesets = [];
 var emblems = [];
 var mapSize = 0;
+var mapPosition = 0;
+var mapMovingRight = false;
+var mapMovingLeft = false;
 var emblemPosition = 10;
 
 function gameStart() {
@@ -243,6 +246,29 @@ function animate() {
   ctx.fillStyle = '#666';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // Map moviment
+  mapMovingLeft = false;
+  mapMovingRight = false;
+  if (
+    mapPosition < mapSize - canvas.width &&
+    playerKeys.d.pressed &&
+    player.position.x >= canvas.width / 2 &&
+    !player.isAttacking
+  ) {
+    // Player moving to right
+    mapPosition += config.player.velocity.x;
+    mapMovingRight = true;
+  } else if (
+    mapPosition > 0 &&
+    playerKeys.a.pressed &&
+    player.position.x <= 50 &&
+    !player.isAttacking
+  ) {
+    // Player moving to left
+    mapPosition -= config.player.velocity.x;
+    mapMovingLeft = true;
+  }
+
   // Gravity
   player.position.y += player.velocity.y;
   player.velocity.y += config.gravity;
@@ -254,22 +280,12 @@ function animate() {
 
   //Backgrounds
   backgrounds.forEach((background) => {
-    background.update({
-      keys: playerKeys,
-      playerPositionX: player.position.x,
-      isPlayerAttacking: player.isAttacking,
-      mapSize,
-    });
+    background.update({ mapMovingLeft, mapMovingRight });
   });
 
   // Tilesets
   tilesets.forEach((tileset) => {
-    tileset.update({
-      keys: playerKeys,
-      playerPositionX: player.position.x,
-      isPlayerAttacking: player.isAttacking,
-      mapSize,
-    });
+    tileset.update({ mapMovingLeft, mapMovingRight });
 
     // Player collision
     if (
@@ -299,12 +315,7 @@ function animate() {
 
   // Emblems
   emblems.forEach((emblem) => {
-    emblem.update({
-      keys: playerKeys,
-      playerPositionX: player.position.x,
-      isPlayerAttacking: player.isAttacking,
-      mapSize,
-    });
+    emblem.update({ mapMovingLeft, mapMovingRight });
 
     // Player collision
     if (
@@ -336,10 +347,8 @@ function animate() {
 
     enemy.update({
       animationId,
-      keys: playerKeys,
-      playerPositionX: player.position.x,
-      isPlayerAttacking: player.isAttacking,
-      mapSize,
+      mapMovingLeft,
+      mapMovingRight,
     });
   });
 

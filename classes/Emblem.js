@@ -1,7 +1,7 @@
 import { useCanvas } from '../helpers.js';
 import config from '../config.js';
 
-const { canvas, ctx } = useCanvas();
+const { ctx } = useCanvas();
 
 export class Emblem {
   constructor({ position, image, scale, fixedPositionY }) {
@@ -13,7 +13,6 @@ export class Emblem {
       x: 0,
       y: fixedPositionY ? fixedPositionY : 20,
     };
-    this.mapPosition = 0;
     this.image = image;
     this.width = 56 * scale;
     this.height = 56 * scale;
@@ -34,26 +33,12 @@ export class Emblem {
     );
   }
 
-  update({ keys, playerPositionX, isPlayerAttacking, mapSize }) {
-    if (
-      this.mapPosition < mapSize - canvas.width &&
-      keys.d.pressed &&
-      playerPositionX >= canvas.width / 2 &&
-      !isPlayerAttacking &&
-      !this.isFixed
-    ) {
+  update({ mapMovingLeft, mapMovingRight }) {
+    if (mapMovingRight && !this.isFixed) {
       // Player moving to right
-      this.mapPosition += config.player.velocity.x;
       this.position.x -= config.player.velocity.x;
-    } else if (
-      this.mapPosition > 0 &&
-      keys.a.pressed &&
-      playerPositionX < 50 &&
-      !isPlayerAttacking &&
-      !this.isFixed
-    ) {
+    } else if (mapMovingLeft && !this.isFixed) {
       // Player moving to left
-      this.mapPosition -= config.player.velocity.x;
       this.position.x += config.player.velocity.x;
     }
 

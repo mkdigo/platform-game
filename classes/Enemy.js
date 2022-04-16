@@ -142,7 +142,10 @@ export class Enemy {
     ctx.restore();
   }
 
-  update({ animationId }) {
+  update({ animationId, mapMovingLeft, mapMovingRight }) {
+    if (mapMovingLeft) this.position.x += config.player.velocity.x;
+    else if (mapMovingRight) this.position.x -= config.player.velocity.x;
+
     if (animationId % 9 === 0) this.frame.current++;
     if (this.frame.current >= this.frame.amount) this.frame.current = 0;
 
