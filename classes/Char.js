@@ -4,14 +4,14 @@ import { useCanvas } from '../helpers.js';
 const { canvas, ctx } = useCanvas();
 
 export class Char {
-  constructor({ position, width, height, image, frame }) {
+  constructor({ position, image, frame }) {
     this.position = position;
     this.velocity = {
       x: config.player.velocity.x,
       y: config.player.velocity.y,
     };
-    this.width = width;
-    this.height = height;
+    this.width = 150;
+    this.height = 150;
 
     this.image = image;
     this.flipImage = false;
@@ -22,7 +22,12 @@ export class Char {
       amount: this.frame.idle.amount,
     };
 
-    this.setHitBox();
+    this.hitBox = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    };
 
     this.isJumping = false;
     this.isAttacking = false;
@@ -30,11 +35,16 @@ export class Char {
   }
 
   setHitBox() {
+    let offsetX = 0.33;
+    let offsetY = 0;
+    if (this.flipImage) offsetX = 0.39;
+    if (this.isJumping) offsetY = 0.15;
+
     this.hitBox = {
-      x: this.position.x + this.width / 3,
-      y: this.position.y + this.height / 2 - 10,
-      w: this.width / 3,
-      h: this.height / 2 + 10,
+      x: this.position.x + this.width * offsetX,
+      y: this.position.y + this.height * 0.4 - this.height * offsetY,
+      w: this.width * 0.28,
+      h: this.height * 0.59,
     };
   }
 

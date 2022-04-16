@@ -28,8 +28,8 @@ function gameStart() {
       x: 200,
       y: 50,
     },
-    width: 150,
-    height: 150,
+    // width: 150,
+    // height: 150,
     image: createImage('./assets/player/1.png'),
     frame: {
       size: {
