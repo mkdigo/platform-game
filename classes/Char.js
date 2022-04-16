@@ -141,13 +141,13 @@ export class Char {
     // ctx.fillStyle = '#033';
     // ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
 
-    ctx.fillStyle = '#900';
-    ctx.fillRect(
-      this.attackHitBox.x,
-      this.attackHitBox.y,
-      this.attackHitBox.w,
-      this.attackHitBox.h
-    );
+    // ctx.fillStyle = '#fff';
+    // ctx.fillRect(
+    //   this.attackHitBox.x,
+    //   this.attackHitBox.y,
+    //   this.attackHitBox.w,
+    //   this.attackHitBox.h
+    // );
 
     ctx.save();
     if (this.flipImage) ctx.scale(-1, 1);

@@ -28,8 +28,6 @@ function gameStart() {
       x: 200,
       y: 50,
     },
-    // width: 150,
-    // height: 150,
     image: createImage('./assets/player/1.png'),
     frame: {
       size: {
@@ -89,36 +87,72 @@ function gameStart() {
         x: 330,
         y: 50,
       },
-      width: 75,
-      height: 75,
+      width: 95,
+      height: 95,
       image: 'goblin',
+      emblem: new Emblem({
+        position: {
+          x: 330,
+          y: canvas.height - 150,
+        },
+        image: createImage('./assets/emblems/js.png'),
+        scale: 1,
+        fixedPositionY: 0,
+      }),
     }),
     new Enemy({
       position: {
         x: 550,
         y: 50,
       },
-      width: 75,
-      height: 75,
+      width: 95,
+      height: 95,
       image: 'flyingEye',
+      emblem: new Emblem({
+        position: {
+          x: 550,
+          y: canvas.height - 150,
+        },
+        image: createImage('./assets/emblems/ts.png'),
+        scale: 1,
+        fixedPositionY: 0,
+      }),
     }),
     new Enemy({
       position: {
         x: 650,
         y: 50,
       },
-      width: 75,
-      height: 75,
+      width: 130,
+      height: 130,
       image: 'mushroom',
+      emblem: new Emblem({
+        position: {
+          x: 650,
+          y: canvas.height - 150,
+        },
+        image: createImage('./assets/emblems/php.png'),
+        scale: 1,
+        fixedPositionY: 0,
+      }),
     }),
     new Enemy({
       position: {
         x: 750,
         y: 50,
       },
-      width: 100,
-      height: 100,
+      width: 130,
+      height: 130,
       image: 'skeleton',
+      emblem: new Emblem({
+        position: {
+          x: 750,
+          y: canvas.height - 150,
+        },
+        image: createImage('./assets/emblems/laravel.png'),
+        scale: 1,
+        fixedPositionY: 0,
+      }),
     }),
   ];
 
@@ -338,12 +372,39 @@ function animate() {
 
   //Enemies
   enemies.forEach((enemy) => {
+    if (!enemy.isDeath) {
+      if (
+        player.position.x + player.width / 2 >
+        enemy.position.x + enemy.width / 2
+      )
+        enemy.flipImage = false;
+      else enemy.flipImage = true;
+    }
+
     if (
-      player.position.x + player.width / 2 >
-      enemy.position.x + enemy.width / 2
-    )
-      enemy.flipImage = false;
-    else enemy.flipImage = true;
+      player.isAttacking &&
+      !enemy.isInvulnerable &&
+      collision({
+        ax: player.attackHitBox.x,
+        ay: player.attackHitBox.y,
+        aw: player.attackHitBox.w,
+        ah: player.attackHitBox.h,
+        bx: enemy.hitBox.x,
+        by: enemy.hitBox.y,
+        bw: enemy.hitBox.w,
+        bh: enemy.hitBox.h,
+      })
+    ) {
+      enemy.damage(25);
+    }
+
+    if (enemy.isDeath) {
+      if (!enemy.emblem.isFixed) {
+        enemy.emblem.get(emblemPosition);
+        emblemPosition += enemy.emblem.width + 10;
+      }
+      enemy.emblem.update({ mapMovingLeft, mapMovingRight });
+    }
 
     enemy.update({
       animationId,

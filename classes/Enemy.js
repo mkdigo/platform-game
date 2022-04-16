@@ -1,10 +1,10 @@
 import { createImage, useCanvas } from '../helpers.js';
 import config from '../config.js';
 
-const { ctx, canvas } = useCanvas();
+const { ctx } = useCanvas();
 
 export class Enemy {
-  constructor({ position, width, height, image }) {
+  constructor({ position, width, height, image, emblem }) {
     this.position = position;
     this.width = width;
     this.height = height;
@@ -16,10 +16,16 @@ export class Enemy {
     this.images = {
       goblin: {
         frame: {
-          x: 57,
-          y: 66,
-          w: 35,
-          h: 35,
+          x: 53,
+          y: 56,
+          w: 45,
+          h: 45,
+        },
+        hitBox: {
+          rightOffsetX: 0.15,
+          rightOffsetY: 0.25,
+          leftOffsetX: 0.26,
+          leftOffsetY: 0.25,
         },
         idle: {
           image: createImage('./assets/enemies/goblin/idle.png'),
@@ -40,10 +46,16 @@ export class Enemy {
       },
       flyingEye: {
         frame: {
-          x: 57,
-          y: 58,
-          w: 42,
-          h: 42,
+          x: 54,
+          y: 50,
+          w: 50,
+          h: 50,
+        },
+        hitBox: {
+          rightOffsetX: 0.1,
+          rightOffsetY: 0.2,
+          leftOffsetX: 0.28,
+          leftOffsetY: 0.2,
         },
         idle: {
           image: createImage('./assets/enemies/flyingEye/idle.png'),
@@ -64,10 +76,16 @@ export class Enemy {
       },
       mushroom: {
         frame: {
-          x: 57,
-          y: 64,
-          w: 38,
-          h: 38,
+          x: 43,
+          y: 35,
+          w: 65,
+          h: 65,
+        },
+        hitBox: {
+          rightOffsetX: 0.05,
+          rightOffsetY: 0.45,
+          leftOffsetX: 0.35,
+          leftOffsetY: 0.45,
         },
         idle: {
           image: createImage('./assets/enemies/mushroom/idle.png'),
@@ -88,10 +106,16 @@ export class Enemy {
       },
       skeleton: {
         frame: {
-          x: 53,
-          y: 48,
-          w: 53,
-          h: 53,
+          x: 48,
+          y: 36,
+          w: 65,
+          h: 65,
+        },
+        hitBox: {
+          rightOffsetX: 0.05,
+          rightOffsetY: 0.2,
+          leftOffsetX: 0.35,
+          leftOffsetY: 0.2,
         },
         idle: {
           image: createImage('./assets/enemies/skeleton/idle.png'),
@@ -113,6 +137,7 @@ export class Enemy {
     };
     this.frame = {
       current: 0,
+      hold: 9,
       x: this.images[this.image].frame.x,
       y: this.images[this.image].frame.y,
       w: this.images[this.image].frame.w,
@@ -121,11 +146,74 @@ export class Enemy {
       amount: this.images[this.image].idle.amount,
     };
     this.flipImage = true;
+    this.health = 100;
+    this.isInvulnerable = false;
+    this.isDeath = false;
+    this.hitBox = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    };
+    this.emblem = emblem;
+  }
+
+  setHitBox() {
+    let offsetX = this.images[this.image].hitBox.rightOffsetX;
+    let offsetY = this.images[this.image].hitBox.rightOffsetY;
+    if (this.flipImage) offsetX = this.images[this.image].hitBox.leftOffsetX;
+    if (this.flipImage) offsetY = this.images[this.image].hitBox.leftOffsetY;
+
+    this.hitBox = {
+      x: this.position.x + this.width * offsetX,
+      y: this.position.y + this.height * offsetY,
+      w: this.width * 0.6,
+      h: this.height * (1 - offsetY),
+    };
+  }
+
+  damage(n) {
+    if (this.isInvulnerable === false) {
+      this.isInvulnerable = true;
+      if (this.health - n > 0) {
+        this.health -= n;
+        this.frame.image = this.images[this.image].takeHit.image;
+        this.frame.amount = this.images[this.image].takeHit.amount;
+      } else {
+        this.health = 0;
+        this.isDeath = true;
+        this.frame.image = this.images[this.image].death.image;
+        this.frame.amount = this.images[this.image].death.amount;
+      }
+      this.frame.current = 0;
+      this.frame.hold = 12;
+    }
   }
 
   draw() {
+    // ctx.fillStyle = '#333';
     // ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
 
+    // ctx.fillStyle = '#333';
+    // ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
+
+    // Render Health
+    ctx.fillStyle = '#900';
+    ctx.fillRect(
+      this.hitBox.x - this.hitBox.w * 0.15,
+      this.hitBox.y - 20,
+      this.hitBox.w,
+      5
+    );
+    ctx.fillStyle = '#090';
+    ctx.fillRect(
+      this.hitBox.x - this.hitBox.w * 0.15,
+      this.hitBox.y - 20,
+      (this.hitBox.w * this.health) / 100,
+      5
+    );
+
+    // Render Enemy
     ctx.save();
     if (this.flipImage) ctx.scale(-1, 1);
     ctx.drawImage(
@@ -143,11 +231,28 @@ export class Enemy {
   }
 
   update({ animationId, mapMovingLeft, mapMovingRight }) {
-    if (mapMovingLeft) this.position.x += config.player.velocity.x;
-    else if (mapMovingRight) this.position.x -= config.player.velocity.x;
+    this.setHitBox();
 
-    if (animationId % 9 === 0) this.frame.current++;
-    if (this.frame.current >= this.frame.amount) this.frame.current = 0;
+    if (mapMovingLeft) {
+      this.position.x += config.player.velocity.x;
+      this.emblem.position.x += config.player.velocity.x;
+    } else if (mapMovingRight) {
+      this.position.x -= config.player.velocity.x;
+      this.emblem.position.x -= config.player.velocity.x;
+    }
+
+    if (animationId % this.frame.hold === 0) this.frame.current++;
+
+    if (this.frame.current >= this.frame.amount) {
+      this.frame.current = 0;
+      if (this.isInvulnerable && !this.isDeath) {
+        this.isInvulnerable = false;
+        this.frame.hold = 9;
+        this.frame.image = this.images[this.image].idle.image;
+        this.frame.amount = this.images[this.image].idle.amount;
+      }
+      if (this.isDeath) this.frame.current = this.frame.amount - 1;
+    }
 
     this.draw();
   }
