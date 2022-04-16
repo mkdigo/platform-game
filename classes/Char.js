@@ -29,6 +29,13 @@ export class Char {
       h: 0,
     };
 
+    this.attackHitBox = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    };
+
     this.isJumping = false;
     this.isAttacking = false;
     this.lastMove = '';
@@ -45,6 +52,18 @@ export class Char {
       y: this.position.y + this.height * 0.4 - this.height * offsetY,
       w: this.width * 0.28,
       h: this.height * 0.59,
+    };
+  }
+
+  setAttackHitBox() {
+    let offsetX = 0.33;
+    if (this.flipImage) offsetX = 0.02;
+
+    this.attackHitBox = {
+      x: this.position.x + this.width * 1.7 * offsetX,
+      y: this.position.y + this.height * 0.61,
+      w: this.width * 0.4,
+      h: this.height * 0.15,
     };
   }
 
@@ -122,6 +141,14 @@ export class Char {
     // ctx.fillStyle = '#033';
     // ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
 
+    ctx.fillStyle = '#900';
+    ctx.fillRect(
+      this.attackHitBox.x,
+      this.attackHitBox.y,
+      this.attackHitBox.w,
+      this.attackHitBox.h
+    );
+
     ctx.save();
     if (this.flipImage) ctx.scale(-1, 1);
     ctx.drawImage(
@@ -140,6 +167,7 @@ export class Char {
 
   update({ animationId, keys }) {
     this.setHitBox();
+    this.setAttackHitBox();
 
     // Moviments
     if (keys.k.pressed) this.move('attack');
