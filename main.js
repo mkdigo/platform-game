@@ -5,12 +5,14 @@ import { Emblem } from './classes/Emblem.js';
 
 import { collision, createImage, useCanvas } from './helpers.js';
 import config from './config.js';
+import { Enemy } from './classes/Enemy.js';
 
 const { canvas, ctx } = useCanvas();
 canvas.width = 900;
 canvas.height = 560;
 
 var player;
+var enemies = [];
 var backgrounds = [];
 var tilesets = [];
 var emblems = [];
@@ -77,6 +79,45 @@ function gameStart() {
       },
     },
   });
+
+  enemies = [
+    new Enemy({
+      position: {
+        x: 330,
+        y: 50,
+      },
+      width: 75,
+      height: 75,
+      image: 'goblin',
+    }),
+    new Enemy({
+      position: {
+        x: 550,
+        y: 50,
+      },
+      width: 75,
+      height: 75,
+      image: 'flyingEye',
+    }),
+    new Enemy({
+      position: {
+        x: 650,
+        y: 50,
+      },
+      width: 75,
+      height: 75,
+      image: 'mushroom',
+    }),
+    new Enemy({
+      position: {
+        x: 750,
+        y: 50,
+      },
+      width: 100,
+      height: 100,
+      image: 'skeleton',
+    }),
+  ];
 
   backgrounds = [
     new Background({
@@ -206,6 +247,11 @@ function animate() {
   player.position.y += player.velocity.y;
   player.velocity.y += config.gravity;
 
+  enemies.forEach((enemy) => {
+    enemy.position.y += enemy.velocity.y;
+    enemy.velocity.y += config.gravity;
+  });
+
   //Backgrounds
   backgrounds.forEach((background) => {
     background.update({
@@ -237,8 +283,21 @@ function animate() {
       player.velocity.y = 0;
       player.isJumping = false;
     }
+
+    // Enemy collision
+    enemies.forEach((enemy) => {
+      if (
+        enemy.position.y + enemy.height + enemy.velocity.y >=
+          tileset.position.y &&
+        enemy.position.x + enemy.width >= tileset.position.x &&
+        enemy.position.x <= tileset.position.x + tileset.width
+      ) {
+        enemy.velocity.y = 0;
+      }
+    });
   });
 
+  // Emblems
   emblems.forEach((emblem) => {
     emblem.update({
       keys: playerKeys,
@@ -264,6 +323,24 @@ function animate() {
       emblem.get(emblemPosition);
       emblemPosition += emblem.width + 10;
     }
+  });
+
+  //Enemies
+  enemies.forEach((enemy) => {
+    if (
+      player.position.x + player.width / 2 >
+      enemy.position.x + enemy.width / 2
+    )
+      enemy.flipImage = false;
+    else enemy.flipImage = true;
+
+    enemy.update({
+      animationId,
+      keys: playerKeys,
+      playerPositionX: player.position.x,
+      isPlayerAttacking: player.isAttacking,
+      mapSize,
+    });
   });
 
   player.update({ animationId, keys: playerKeys });

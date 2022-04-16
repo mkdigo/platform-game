@@ -106,8 +106,6 @@ export class Char {
         this.frame.position.y = this.frame.idle.y;
         this.frame.position.amount = this.frame.idle.amount;
     }
-
-    this.setHitBox();
   }
 
   draw() {
@@ -131,6 +129,8 @@ export class Char {
   }
 
   update({ animationId, keys }) {
+    this.setHitBox();
+
     // Moviments
     if (keys.k.pressed) this.move('attack');
     else if (keys.d.pressed && !this.isAttacking) this.move('right');
