@@ -245,20 +245,6 @@ export class Enemy {
   }
 
   draw() {
-    // ctx.fillStyle = '#333';
-    // ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
-
-    // ctx.fillStyle = '#333';
-    // ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
-
-    // ctx.fillStyle = '#900';
-    // ctx.fillRect(
-    //   this.attackHitBox.x,
-    //   this.attackHitBox.y,
-    //   this.attackHitBox.w,
-    //   this.attackHitBox.h
-    // );
-
     // Render Health
     ctx.fillStyle = '#900';
     ctx.fillRect(this.hitBox.x, this.hitBox.y - 20, this.hitBox.w, 5);
@@ -291,14 +277,15 @@ export class Enemy {
     this.setHitBox();
     this.setAttackHitBox();
 
+    if (!this.emblem.isFixed) {
+      this.emblem.position.x = this.hitBox.x;
+      this.emblem.position.y = this.hitBox.y;
+    }
+
     if (mapMovingLeft) {
       this.position.x += config.player.velocity.x;
-      if (!this.emblem.isFixed)
-        this.emblem.position.x += config.player.velocity.x;
     } else if (mapMovingRight) {
       this.position.x -= config.player.velocity.x;
-      if (!this.emblem.isFixed)
-        this.emblem.position.x -= config.player.velocity.x;
     }
 
     if (animationId % this.frame.hold === 0) this.frame.current++;

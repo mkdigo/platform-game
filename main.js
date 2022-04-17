@@ -7,7 +7,7 @@ import { collision, createImage, useCanvas } from './helpers.js';
 import config from './config.js';
 import { Enemy } from './classes/Enemy.js';
 
-const { canvas, ctx } = useCanvas();
+const { canvas } = useCanvas();
 canvas.width = 900;
 canvas.height = 560;
 
@@ -84,7 +84,7 @@ function gameStart() {
   enemies = [
     new Enemy({
       position: {
-        x: 150,
+        x: 1800,
         y: 50,
       },
       width: 210,
@@ -102,7 +102,7 @@ function gameStart() {
     }),
     new Enemy({
       position: {
-        x: 550,
+        x: 2550,
         y: 50,
       },
       width: 95,
@@ -120,7 +120,7 @@ function gameStart() {
     }),
     new Enemy({
       position: {
-        x: 650,
+        x: 3000,
         y: 50,
       },
       width: 300,
@@ -131,14 +131,14 @@ function gameStart() {
           x: 650,
           y: canvas.height - 150,
         },
-        image: createImage('./assets/emblems/php.png'),
+        image: createImage('./assets/emblems/mysql.png'),
         scale: 1,
         fixedPositionY: 0,
       }),
     }),
     new Enemy({
       position: {
-        x: 550,
+        x: 4300,
         y: 50,
       },
       width: 300,
@@ -216,6 +216,7 @@ function gameStart() {
     );
   };
 
+  // Create Map
   addGround();
   addGround();
   addGround();
@@ -243,14 +244,27 @@ function gameStart() {
   addGround();
   addGround();
   addGround();
-
-  // addEmblem({ imageUrl: './assets/emblems/js.png' });
-  // addEmblem({ imageUrl: './assets/emblems/ts.png' });
-  // addEmblem({ imageUrl: './assets/emblems/react.png' });
-  // addEmblem({ imageUrl: './assets/emblems/php.png' });
-  // addEmblem({ imageUrl: './assets/emblems/laravel.png' });
-  // addEmblem({ imageUrl: './assets/emblems/mysql.png' });
-  // addEmblem({ imageUrl: './assets/emblems/github.png' });
+  addGround({ gap: -150, up: 150 });
+  addGround();
+  addGround({ gap: -150, up: 150 });
+  addEmblem({ imageUrl: './assets/emblems/react.png', up: -30, gap: 80 });
+  addGround();
+  addGround({ gap: -150, up: 150 });
+  addGround({ gap: 180 });
+  addGround();
+  addGround();
+  addGround({ gap: 100, up: 100 });
+  addGround({ gap: 100, up: 200 });
+  addEmblem({ imageUrl: './assets/emblems/php.png', gap: 80, up: 260 });
+  addGround({ gap: 180 });
+  addGround();
+  addGround();
+  addGround();
+  addGround();
+  addEmblem({ imageUrl: './assets/emblems/github.png' });
+  addGround();
+  addGround();
+  addGround();
 
   animate();
 }

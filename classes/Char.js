@@ -168,17 +168,6 @@ export class Char {
   }
 
   draw() {
-    // ctx.fillStyle = '#033';
-    // ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
-
-    // ctx.fillStyle = '#fff';
-    // ctx.fillRect(
-    //   this.attackHitBox.x,
-    //   this.attackHitBox.y,
-    //   this.attackHitBox.w,
-    //   this.attackHitBox.h
-    // );
-
     ctx.save();
     if (this.flipImage) ctx.scale(-1, 1);
     ctx.drawImage(
