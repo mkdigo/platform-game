@@ -84,7 +84,7 @@ function gameStart() {
   enemies = [
     new Enemy({
       position: {
-        x: 250,
+        x: 150,
         y: 50,
       },
       width: 210,
@@ -277,9 +277,6 @@ const playerKeys = {
 function animate() {
   const animationId = requestAnimationFrame(animate);
 
-  ctx.fillStyle = '#666';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   // Map moviment
   mapMovingLeft = false;
   mapMovingRight = false;
@@ -372,15 +369,38 @@ function animate() {
 
   //Enemies
   enemies.forEach((enemy) => {
+    let damageDash = -5;
+
     if (!enemy.isDeath) {
       if (
         player.position.x + player.width / 2 >
         enemy.position.x + enemy.width / 2
-      )
+      ) {
         enemy.flipImage = false;
-      else enemy.flipImage = true;
+        damageDash = 5;
+      } else enemy.flipImage = true;
     }
 
+    // Enemy attack collison
+    if (
+      enemy.isAttacking &&
+      enemy.frame.current === enemy.frame.amount / 2 + 1 &&
+      !player.isInvulnerable &&
+      collision({
+        ax: enemy.attackHitBox.x,
+        ay: enemy.attackHitBox.y,
+        aw: enemy.attackHitBox.w,
+        ah: enemy.attackHitBox.h,
+        bx: player.hitBox.x,
+        by: player.hitBox.y,
+        bw: player.hitBox.w,
+        bh: player.hitBox.h,
+      })
+    ) {
+      player.damage({ damageDash, hp: 25 });
+    }
+
+    // Player attack collision
     if (
       player.isAttacking &&
       !enemy.isInvulnerable &&

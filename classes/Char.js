@@ -16,6 +16,7 @@ export class Char {
     this.image = image;
     this.flipImage = false;
     this.frame = frame;
+    this.frame.hold = 6;
     this.frame.position = {
       x: 0,
       y: 0,
@@ -38,7 +39,14 @@ export class Char {
 
     this.isJumping = false;
     this.isAttacking = false;
+    this.isInvulnerable = false;
+    this.isDeath = false;
+    this.health = 100;
+    this.damageDash = -5;
     this.lastMove = '';
+
+    this.setHitBox();
+    this.setAttackHitBox();
   }
 
   setHitBox() {
@@ -72,7 +80,29 @@ export class Char {
     this.frame.position.amount = this.frame.attack.amount;
   }
 
+  damage({ damageDash, hp }) {
+    this.damageDash = damageDash;
+
+    if (this.isInvulnerable === false) {
+      this.isInvulnerable = true;
+
+      if (this.health - hp > 0) {
+        // this.health -= hp;
+        this.frame.position.y = this.frame.takeHit.y;
+        this.frame.position.amount = this.frame.takeHit.amount;
+      } else {
+        this.health = 0;
+        this.isDeath = true;
+        this.frame.position.y = this.frame.die1.y;
+        this.frame.position.amount = this.frame.die1.amount;
+      }
+      this.frame.position.x = 0;
+    }
+  }
+
   move(direction) {
+    if (this.isInvulnerable) return;
+
     switch (direction) {
       case 'right':
         this.flipImage = false;
@@ -183,23 +213,21 @@ export class Char {
       this.move('fall');
     }
 
+    if (this.isInvulnerable) this.position.x += this.damageDash;
+
     // Frames
-    if (this.isJumping || this.isAttacking) {
+    if (this.isJumping || this.isAttacking || this.isInvulnerable) {
       if (this.frame.position.x < this.frame.position.amount - 1) {
-        if (this.isAttacking) {
-          if (animationId % 6 === 0) this.frame.position.x++;
-          if (this.frame.position.x === this.frame.position.amount - 1)
+        if (this.isAttacking || this.isInvulnerable) {
+          if (animationId % this.frame.hold === 0) this.frame.position.x++;
+          if (this.frame.position.x === this.frame.position.amount - 1) {
             this.isAttacking = false;
+            this.isInvulnerable = false;
+          }
         } else this.frame.position.x++;
       }
-
-      if (
-        this.isAttacking &&
-        this.frame.position.x === this.frame.position.amount - 1
-      )
-        this.isAttacking = false;
     } else {
-      if (animationId % 6 === 0) this.frame.position.x++;
+      if (animationId % this.frame.hold === 0) this.frame.position.x++;
 
       if (this.frame.position.x >= this.frame.position.amount)
         this.frame.position.x = 0;

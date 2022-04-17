@@ -27,6 +27,12 @@ export class Enemy {
           leftOffsetX: 0.42,
           leftOffsetY: 0.67,
         },
+        attackHitBox: {
+          rightOffsetX: 0.08,
+          rightOffsetY: 0.67,
+          leftOffsetX: 0.08,
+          leftOffsetY: 0.67,
+        },
         idle: {
           image: createImage('./assets/enemies/goblin/idle.png'),
           amount: 4,
@@ -56,6 +62,12 @@ export class Enemy {
           rightOffsetY: 0.2,
           leftOffsetX: 0.28,
           leftOffsetY: 0.2,
+        },
+        attackHitBox: {
+          rightOffsetX: 0.15,
+          rightOffsetY: 0.3,
+          leftOffsetX: 0.15,
+          leftOffsetY: 0.3,
         },
         idle: {
           image: createImage('./assets/enemies/flyingEye/idle.png'),
@@ -87,6 +99,12 @@ export class Enemy {
           leftOffsetX: 0.44,
           leftOffsetY: 0.77,
         },
+        attackHitBox: {
+          rightOffsetX: 0.3,
+          rightOffsetY: 0.8,
+          leftOffsetX: 0.3,
+          leftOffsetY: 0.8,
+        },
         idle: {
           image: createImage('./assets/enemies/mushroom/idle.png'),
           amount: 4,
@@ -116,6 +134,12 @@ export class Enemy {
           rightOffsetY: 0.66,
           leftOffsetX: 0.4,
           leftOffsetY: 0.66,
+        },
+        attackHitBox: {
+          rightOffsetX: 0.0,
+          rightOffsetY: 0.65,
+          leftOffsetX: 0.0,
+          leftOffsetY: 0.65,
         },
         idle: {
           image: createImage('./assets/enemies/skeleton/idle.png'),
@@ -156,6 +180,12 @@ export class Enemy {
       w: 0,
       h: 0,
     };
+    this.attackHitBox = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    };
     this.emblem = emblem;
   }
 
@@ -166,6 +196,22 @@ export class Enemy {
     if (this.flipImage) offsetY = this.images[this.image].hitBox.leftOffsetY;
 
     this.hitBox = {
+      x: this.position.x + this.width * offsetX,
+      y: this.position.y + this.height * offsetY,
+      w: this.width - this.width * offsetX * 2,
+      h: this.height * (1 - offsetY),
+    };
+  }
+
+  setAttackHitBox() {
+    let offsetX = this.images[this.image].attackHitBox.rightOffsetX;
+    let offsetY = this.images[this.image].attackHitBox.rightOffsetY;
+    if (this.flipImage)
+      offsetX = this.images[this.image].attackHitBox.leftOffsetX;
+    if (this.flipImage)
+      offsetY = this.images[this.image].attackHitBox.leftOffsetY;
+
+    this.attackHitBox = {
       x: this.position.x + this.width * offsetX,
       y: this.position.y + this.height * offsetY,
       w: this.width - this.width * offsetX * 2,
@@ -191,12 +237,27 @@ export class Enemy {
     }
   }
 
+  attack() {
+    this.isAttacking = true;
+    this.frame.image = this.images[this.image].attack.image;
+    this.frame.amount = this.images[this.image].attack.amount;
+    this.frame.current = 0;
+  }
+
   draw() {
     // ctx.fillStyle = '#333';
     // ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
 
     // ctx.fillStyle = '#333';
     // ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.w, this.hitBox.h);
+
+    // ctx.fillStyle = '#900';
+    // ctx.fillRect(
+    //   this.attackHitBox.x,
+    //   this.attackHitBox.y,
+    //   this.attackHitBox.w,
+    //   this.attackHitBox.h
+    // );
 
     // Render Health
     ctx.fillStyle = '#900';
@@ -228,6 +289,7 @@ export class Enemy {
 
   update({ animationId, mapMovingLeft, mapMovingRight }) {
     this.setHitBox();
+    this.setAttackHitBox();
 
     if (mapMovingLeft) {
       this.position.x += config.player.velocity.x;
@@ -241,10 +303,14 @@ export class Enemy {
 
     if (animationId % this.frame.hold === 0) this.frame.current++;
 
+    if (animationId % 150 === 0 && !this.isAttacking && !this.isDeath)
+      this.attack();
+
     if (this.frame.current >= this.frame.amount) {
       this.frame.current = 0;
-      if (this.isInvulnerable && !this.isDeath) {
+      if ((this.isInvulnerable && !this.isDeath) || this.isAttacking) {
         this.isInvulnerable = false;
+        this.isAttacking = false;
         this.frame.hold = 9;
         this.frame.image = this.images[this.image].idle.image;
         this.frame.amount = this.images[this.image].idle.amount;
