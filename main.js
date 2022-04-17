@@ -84,11 +84,11 @@ function gameStart() {
   enemies = [
     new Enemy({
       position: {
-        x: 330,
+        x: 250,
         y: 50,
       },
-      width: 95,
-      height: 95,
+      width: 210,
+      height: 210,
       image: 'goblin',
       emblem: new Emblem({
         position: {
@@ -123,8 +123,8 @@ function gameStart() {
         x: 650,
         y: 50,
       },
-      width: 130,
-      height: 130,
+      width: 300,
+      height: 300,
       image: 'mushroom',
       emblem: new Emblem({
         position: {
@@ -138,11 +138,11 @@ function gameStart() {
     }),
     new Enemy({
       position: {
-        x: 750,
+        x: 550,
         y: 50,
       },
-      width: 130,
-      height: 130,
+      width: 300,
+      height: 300,
       image: 'skeleton',
       emblem: new Emblem({
         position: {
@@ -339,8 +339,8 @@ function animate() {
       if (
         enemy.position.y + enemy.height + enemy.velocity.y >=
           tileset.position.y &&
-        enemy.position.x + enemy.width >= tileset.position.x &&
-        enemy.position.x <= tileset.position.x + tileset.width
+        enemy.hitBox.x + enemy.hitBox.w >= tileset.position.x &&
+        enemy.hitBox.x <= tileset.position.x + tileset.width
       ) {
         enemy.velocity.y = 0;
       }

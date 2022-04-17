@@ -16,16 +16,16 @@ export class Enemy {
     this.images = {
       goblin: {
         frame: {
-          x: 53,
-          y: 56,
-          w: 45,
-          h: 45,
+          x: 28,
+          y: 1,
+          w: 100,
+          h: 100,
         },
         hitBox: {
-          rightOffsetX: 0.15,
-          rightOffsetY: 0.25,
-          leftOffsetX: 0.26,
-          leftOffsetY: 0.25,
+          rightOffsetX: 0.42,
+          rightOffsetY: 0.67,
+          leftOffsetX: 0.42,
+          leftOffsetY: 0.67,
         },
         idle: {
           image: createImage('./assets/enemies/goblin/idle.png'),
@@ -52,7 +52,7 @@ export class Enemy {
           h: 50,
         },
         hitBox: {
-          rightOffsetX: 0.1,
+          rightOffsetX: 0.28,
           rightOffsetY: 0.2,
           leftOffsetX: 0.28,
           leftOffsetY: 0.2,
@@ -76,16 +76,16 @@ export class Enemy {
       },
       mushroom: {
         frame: {
-          x: 43,
-          y: 35,
-          w: 65,
-          h: 65,
+          x: 0,
+          y: -50,
+          w: 150,
+          h: 150,
         },
         hitBox: {
-          rightOffsetX: 0.05,
-          rightOffsetY: 0.45,
-          leftOffsetX: 0.35,
-          leftOffsetY: 0.45,
+          rightOffsetX: 0.44,
+          rightOffsetY: 0.77,
+          leftOffsetX: 0.44,
+          leftOffsetY: 0.77,
         },
         idle: {
           image: createImage('./assets/enemies/mushroom/idle.png'),
@@ -106,16 +106,16 @@ export class Enemy {
       },
       skeleton: {
         frame: {
-          x: 48,
-          y: 36,
-          w: 65,
-          h: 65,
+          x: 0,
+          y: -50,
+          w: 150,
+          h: 150,
         },
         hitBox: {
-          rightOffsetX: 0.05,
-          rightOffsetY: 0.2,
-          leftOffsetX: 0.35,
-          leftOffsetY: 0.2,
+          rightOffsetX: 0.4,
+          rightOffsetY: 0.66,
+          leftOffsetX: 0.4,
+          leftOffsetY: 0.66,
         },
         idle: {
           image: createImage('./assets/enemies/skeleton/idle.png'),
@@ -149,6 +149,7 @@ export class Enemy {
     this.health = 100;
     this.isInvulnerable = false;
     this.isDeath = false;
+    this.isAttacking = false;
     this.hitBox = {
       x: 0,
       y: 0,
@@ -167,7 +168,7 @@ export class Enemy {
     this.hitBox = {
       x: this.position.x + this.width * offsetX,
       y: this.position.y + this.height * offsetY,
-      w: this.width * 0.6,
+      w: this.width - this.width * offsetX * 2,
       h: this.height * (1 - offsetY),
     };
   }
@@ -199,15 +200,10 @@ export class Enemy {
 
     // Render Health
     ctx.fillStyle = '#900';
-    ctx.fillRect(
-      this.hitBox.x - this.hitBox.w * 0.15,
-      this.hitBox.y - 20,
-      this.hitBox.w,
-      5
-    );
+    ctx.fillRect(this.hitBox.x, this.hitBox.y - 20, this.hitBox.w, 5);
     ctx.fillStyle = '#090';
     ctx.fillRect(
-      this.hitBox.x - this.hitBox.w * 0.15,
+      this.hitBox.x,
       this.hitBox.y - 20,
       (this.hitBox.w * this.health) / 100,
       5
