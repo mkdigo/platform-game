@@ -41,6 +41,7 @@ export class Char {
     this.isAttacking = false;
     this.isInvulnerable = false;
     this.isDeath = false;
+    this.deathCount = 0;
     this.health = 100;
     this.damageDash = -5;
     this.lastMove = '';
@@ -87,12 +88,13 @@ export class Char {
       this.isInvulnerable = true;
 
       if (this.health - hp > 0) {
-        // this.health -= hp;
+        this.health -= hp;
         this.frame.position.y = this.frame.takeHit.y;
         this.frame.position.amount = this.frame.takeHit.amount;
       } else {
         this.health = 0;
         this.isDeath = true;
+        this.deathCount++;
         this.frame.position.y = this.frame.die1.y;
         this.frame.position.amount = this.frame.die1.amount;
       }
@@ -101,7 +103,7 @@ export class Char {
   }
 
   move(direction) {
-    if (this.isInvulnerable) return;
+    if (this.isInvulnerable || this.isDeath) return;
 
     switch (direction) {
       case 'right':
@@ -168,6 +170,16 @@ export class Char {
   }
 
   draw() {
+    ctx.fillStyle = '#900';
+    ctx.fillRect(canvas.width - 220, 20, 200, 25);
+    ctx.fillStyle = '#090';
+    ctx.fillRect(canvas.width - 220, 20, (200 * this.health) / 100, 25);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '24px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(`Mortes: ${this.deathCount}`, canvas.width - 20, 70);
+
     ctx.save();
     if (this.flipImage) ctx.scale(-1, 1);
     ctx.drawImage(
@@ -188,6 +200,17 @@ export class Char {
     this.setHitBox();
     this.setAttackHitBox();
 
+    if (this.hitBox.y > canvas.height) {
+      this.position.y = 0;
+      this.position.x -= 200;
+      this.velocity.y = 0;
+      this.deathCount++;
+      this.health = 0;
+      setTimeout(() => {
+        this.health = 100;
+      }, 250);
+    }
+
     // Moviments
     if (keys.k.pressed) this.move('attack');
     else if (keys.d.pressed && !this.isAttacking) this.move('right');
@@ -205,15 +228,35 @@ export class Char {
     if (this.isInvulnerable) this.position.x += this.damageDash;
 
     // Frames
-    if (this.isJumping || this.isAttacking || this.isInvulnerable) {
+    if (
+      this.isJumping ||
+      this.isAttacking ||
+      this.isInvulnerable ||
+      this.isDeath
+    ) {
       if (this.frame.position.x < this.frame.position.amount - 1) {
-        if (this.isAttacking || this.isInvulnerable) {
+        if (this.isJumping) this.frame.position.x++;
+        else {
           if (animationId % this.frame.hold === 0) this.frame.position.x++;
           if (this.frame.position.x === this.frame.position.amount - 1) {
             this.isAttacking = false;
             this.isInvulnerable = false;
           }
-        } else this.frame.position.x++;
+        }
+      }
+
+      if (
+        this.isDeath &&
+        this.frame.position.x === this.frame.position.amount - 1 &&
+        this.frame.position.y === this.frame.die1.y
+      ) {
+        this.frame.position.x = 0;
+        this.frame.position.y = this.frame.die2.y;
+        this.frame.position.amount = this.frame.die2.amount;
+        setTimeout(() => {
+          this.isDeath = false;
+          this.health = 100;
+        }, 1500);
       }
     } else {
       if (animationId % this.frame.hold === 0) this.frame.position.x++;
