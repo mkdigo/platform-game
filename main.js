@@ -342,8 +342,18 @@ function animate() {
       player.hitBox.x <= tileset.position.x + tileset.width
     ) {
       player.velocity.y = 0;
+      player.position.y = tileset.position.y - player.height + 3;
       player.isJumping = false;
     }
+
+    if (
+      player.isJumping &&
+      player.hitBox.y < tileset.position.y + tileset.height &&
+      player.hitBox.y > tileset.position.y &&
+      player.hitBox.x + player.hitBox.w >= tileset.position.x &&
+      player.hitBox.x <= tileset.position.x + tileset.width
+    )
+      player.velocity.y = 3;
 
     // Enemy collision
     enemies.forEach((enemy) => {

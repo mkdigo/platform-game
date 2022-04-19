@@ -201,6 +201,7 @@ export class Char {
     this.setAttackHitBox();
 
     if (this.hitBox.y > canvas.height) {
+      this.isJumping = true;
       this.position.y = 0;
       this.position.x -= 200;
       this.velocity.y = 0;
@@ -219,7 +220,7 @@ export class Char {
       if (!this.isJumping && !this.isAttacking) this.move('stop');
     }
 
-    if (keys.j.pressed) this.move('jump');
+    if (keys.j.pressed && !this.isJumping) this.move('jump');
 
     if (this.isJumping && this.velocity.y > 0) {
       this.move('fall');
@@ -235,14 +236,11 @@ export class Char {
       this.isDeath
     ) {
       if (this.frame.position.x < this.frame.position.amount - 1) {
-        if (this.isJumping) this.frame.position.x++;
-        else {
-          if (animationId % this.frame.hold === 0) this.frame.position.x++;
-          if (this.frame.position.x === this.frame.position.amount - 1) {
-            this.isAttacking = false;
-            this.isInvulnerable = false;
-          }
-        }
+        if (this.isJumping && !this.isAttacking) this.frame.position.x++;
+        else if (animationId % this.frame.hold === 0) this.frame.position.x++;
+      } else {
+        this.isAttacking = false;
+        this.isInvulnerable = false;
       }
 
       if (
@@ -250,6 +248,7 @@ export class Char {
         this.frame.position.x === this.frame.position.amount - 1 &&
         this.frame.position.y === this.frame.die1.y
       ) {
+        this.isInvulnerable = false;
         this.frame.position.x = 0;
         this.frame.position.y = this.frame.die2.y;
         this.frame.position.amount = this.frame.die2.amount;
