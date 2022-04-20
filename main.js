@@ -457,6 +457,7 @@ function animate() {
     });
   });
 
+  if (mapPosition >= 4275) player.win = true;
   player.update({ animationId, keys: playerKeys });
 }
 

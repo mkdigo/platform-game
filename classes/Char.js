@@ -45,6 +45,7 @@ export class Char {
     this.health = 100;
     this.damageDash = -5;
     this.lastMove = '';
+    this.win = false;
 
     this.setHitBox();
     this.setAttackHitBox();
@@ -103,7 +104,7 @@ export class Char {
   }
 
   move(direction) {
-    if (this.isInvulnerable || this.isDeath) return;
+    if (this.isInvulnerable || this.isDeath || this.win) return;
 
     switch (direction) {
       case 'right':
@@ -227,6 +228,21 @@ export class Char {
     }
 
     if (this.isInvulnerable) this.position.x += this.damageDash;
+
+    if (this.win) {
+      this.frame.position.y = this.frame.spellCast.y;
+      this.frame.position.amount = this.frame.spellCast.amount;
+      this.frame.hold = 12;
+
+      ctx.textAlign = 'center';
+      ctx.font = '24px sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(
+        'Você venceu essa fase, mas isso não significa que acabou.',
+        canvas.width / 2,
+        canvas.height / 2
+      );
+    }
 
     // Frames
     if (
