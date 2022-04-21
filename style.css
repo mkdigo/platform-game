@@ -1,8 +1,203 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: 'Poppins', sans-serif;
+}
+
+:root {
+  --color-white: #f1f1f1;
+  --color-green: #41b883;
+  --color-dark-green: #369b6e;
+  --color-dark-blue: #35495e;
+}
+
+body {
+  background: var(--color-white);
+  font-size: 16px;
+}
+
+header {
+  position: relative;
+  display: flex;
+
+  margin-bottom: 1rem;
+}
+
+header h1, header strong {
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+header h1 {
+  background: var(--color-dark-blue);
+  color: #fff;
+  font-size: 2rem;
+}
+
+header strong {
+  flex-grow: 1;
+  font-size: 1.5rem;
+  background: var(--color-dark-green);
+}
+
+h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+section.game {
+  display: flex;
+  justify-content: center;
+}
+
+section.game div.console {
+  position: relative;
+
+  padding: 30px 200px;
+  background: var(--color-dark-blue);
+  border-radius: 4rem;
+  box-shadow: 
+    inset -40px -20px 20px rgba(0, 0, 0, 0.3),
+    inset 40px 20px 20px rgba(255, 255, 255, 0.1),
+    10px 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+section.game div.console div.screen {
+  position: relative;
+  display: flex;
+
+  border-radius: 1rem;
+  box-shadow: 5px 5px 20px rgba(255, 255, 255, 0.2), -5px -5px 20px rgba(0, 0, 0, 0.3);
+}
+
+section.game div.console div.screen span {
+  position: absolute;
+  
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  border-radius: 1rem;
+  box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.5), inset -5px -5px 5px rgba(0, 0, 0, 0.5);
+}
+
+section.game div.console div.screen canvas {
+  border-radius: 1rem;
+}
+
+section.game div.console div.directionalButtons {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  left: 50px;
+  bottom: 70px;
+}
+
+section.game div.console div.directionalButtons div {
+  display: flex;
+  gap: 35px;
+}
+
+section.game div.console button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+
+section.game div.console button:active, .press {
+  padding-top: 3px !important;
+  box-shadow: inset -3px -3px 3px rgba(255, 255, 255, 0.1), inset 3px 3px 3px rgba(0, 0, 0, 0.3), 0px 0px 5px #000 !important;
+}
+
+section.game div.console div.directionalButtons button {
+  width: 35px;
+  height: 45px;
+  
+  background: #333;
+  color: #fff;  
+  border-radius: 10px;
+  box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.1), inset -3px -3px 3px rgba(0, 0, 0, 0.3), 0px 0px 5px #000;
+}
+
+section.game div.console div.directionalButtons div button {
+  width: 45px;
+  height: 35px;
+}
+
+section.game div.console div.actionButtons {
+  position: absolute;
+
+  right: 50px;
+  bottom: 110px;
+}
+
+section.game div.console div.actionButtons button {
+  width: 60px;
+  height: 60px;
+
+  border-radius: 50%;
+  box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.3), inset -3px -3px 3px rgba(0, 0, 0, 0.3), 0px 0px 5px #000;
+}
+
+#jump {
+  position: absolute;
+  right: 65px;
+  top: 40px;
+  background: #990;
+}
+
+#attack {
+  background: #a00;  
+}
+
+section.game div.console div.speaker {
+  position: absolute;
+  width: 80px;
+  top: 80px;
+  left: 80px;
+}
+
+section.game div.console div.speaker.right {
+  left: unset;
+  right: 80px;
+}
+
+section.game div.console div.speaker span {
+  display: block;
+  width: 100%;
+  height: 5px;
+  background: #000;
+  border-radius: 5px;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+}
+
+section.game div.console div.speaker span:not(:first-child) {
+  margin-top: 5px;
+}
+
+.devBy {
+  position: absolute;
+  right: 4rem;
+  bottom: -45px;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.devBy span {
+  color: var(--color-dark-green);
+  font-size: 1.2rem;
+  margin-left: 0.15rem;
 }

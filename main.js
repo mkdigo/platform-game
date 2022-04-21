@@ -463,12 +463,57 @@ function animate() {
 
 gameStart();
 
+const leftButton = document.querySelector('#left');
+const rightButton = document.querySelector('#right');
+const jumpButton = document.querySelector('#jump');
+const attackButton = document.querySelector('#attack');
+
 document.addEventListener('keydown', ({ key }) => {
   if (key === ' ') key = 'space';
   if (Object.keys(playerKeys).includes(key)) playerKeys[key].pressed = true;
+  if (key === 'a') leftButton.classList.add('press');
+  if (key === 'd') rightButton.classList.add('press');
+  if (key === 'j') jumpButton.classList.add('press');
+  if (key === 'k') attackButton.classList.add('press');
 });
 
 document.addEventListener('keyup', ({ key }) => {
   if (key === ' ') key = 'space';
   if (Object.keys(playerKeys).includes(key)) playerKeys[key].pressed = false;
+  if (key === 'a') leftButton.classList.remove('press');
+  if (key === 'd') rightButton.classList.remove('press');
+  if (key === 'j') jumpButton.classList.remove('press');
+  if (key === 'k') attackButton.classList.remove('press');
+});
+
+leftButton.addEventListener('mousedown', () => {
+  playerKeys.a.pressed = true;
+});
+
+leftButton.addEventListener('mouseup', () => {
+  playerKeys.a.pressed = false;
+});
+
+rightButton.addEventListener('mousedown', () => {
+  playerKeys.d.pressed = true;
+});
+
+rightButton.addEventListener('mouseup', () => {
+  playerKeys.d.pressed = false;
+});
+
+jumpButton.addEventListener('mousedown', () => {
+  playerKeys.j.pressed = true;
+});
+
+jumpButton.addEventListener('mouseup', () => {
+  playerKeys.j.pressed = false;
+});
+
+attackButton.addEventListener('mousedown', () => {
+  playerKeys.k.pressed = true;
+});
+
+attackButton.addEventListener('mouseup', () => {
+  playerKeys.k.pressed = false;
 });
