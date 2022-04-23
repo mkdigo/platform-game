@@ -240,7 +240,7 @@ export class Char {
       ctx.fillText(
         'Você venceu essa fase, mas isso não significa que acabou.',
         canvas.width / 2,
-        canvas.height / 2
+        canvas.height / 2 - 70
       );
     }
 

@@ -6,6 +6,7 @@ import { Emblem } from './classes/Emblem.js';
 import { collision, createImage, useCanvas } from './helpers.js';
 import config from './config.js';
 import { Enemy } from './classes/Enemy.js';
+import { Decoration } from './classes/Decoration.js';
 
 const { canvas } = useCanvas();
 canvas.width = 900;
@@ -14,6 +15,7 @@ canvas.height = 560;
 var player;
 var enemies = [];
 var backgrounds = [];
+var decorations = [];
 var tilesets = [];
 var emblems = [];
 var mapSize = 0;
@@ -180,6 +182,20 @@ function gameStart() {
     }),
   ];
 
+  const addDecoration = ({ image, size, gap }) => {
+    if (!gap) gap = 0;
+    decorations.push(
+      new Decoration({
+        position: {
+          x: mapSize + gap,
+          y: canvas.height - size - 50,
+        },
+        image,
+        size,
+      })
+    );
+  };
+
   const addGround = ({ gap, up } = { gap: 0, up: 0 }) => {
     // max gap: 180
     if (!gap) gap = 0;
@@ -217,10 +233,14 @@ function gameStart() {
   };
 
   // Create Map
+  addDecoration({ image: 'shop', size: 300, gap: 20 });
   addGround();
   addGround();
+  addDecoration({ image: 'sign', size: 70, gap: 60 });
   addGround();
+  addDecoration({ image: 'rock3', size: 80, gap: 110 });
   addGround({ gap: 100 });
+  addDecoration({ image: 'lamp', size: 120, gap: 50 });
   addEmblem({
     imageUrl: './assets/emblems/html.png',
     gap: -35,
@@ -238,32 +258,45 @@ function gameStart() {
     scale: 1.25,
   });
   addGround({ gap: 180 });
-
+  addDecoration({ image: 'rock1', size: 40, gap: -100 });
+  addDecoration({ image: 'rock2', size: 50, gap: -50 });
+  addDecoration({ image: 'lamp', size: 120, gap: 50 });
   addGround();
   addGround();
   addGround();
   addGround();
   addGround();
+  addDecoration({ image: 'rock1', size: 40, gap: 0 });
+  addDecoration({ image: 'rock2', size: 50, gap: 60 });
   addGround({ gap: -150, up: 150 });
   addGround();
   addGround({ gap: -150, up: 150 });
   addEmblem({ imageUrl: './assets/emblems/react.png', up: -30, gap: 80 });
   addGround();
   addGround({ gap: -150, up: 150 });
+  addDecoration({ image: 'rock3', size: 80, gap: 200 });
   addGround({ gap: 180 });
   addGround();
+  addDecoration({ image: 'lamp', size: 120, gap: 50 });
   addGround();
   addGround({ gap: 100, up: 100 });
   addGround({ gap: 100, up: 200 });
   addEmblem({ imageUrl: './assets/emblems/php.png', gap: 80, up: 260 });
   addGround({ gap: 180 });
-  addGround();
+  addDecoration({ image: 'rock1', size: 40, gap: 0 });
+  addDecoration({ image: 'rock2', size: 50, gap: 50 });
   addGround();
   addGround();
   addGround();
   addEmblem({ imageUrl: './assets/emblems/github.png' });
+  addDecoration({ image: 'rock3', size: 80, gap: 0 });
+  addGround();
+  addDecoration({ image: 'lamp', size: 120, gap: 50 });
+  addGround();
+  addDecoration({ image: 'shop', size: 300 });
   addGround();
   addGround();
+  addDecoration({ image: 'lamp', size: 120, gap: 50 });
   addGround();
 
   animate();
@@ -326,6 +359,10 @@ function animate() {
   //Backgrounds
   backgrounds.forEach((background) => {
     background.update({ mapMovingLeft, mapMovingRight });
+  });
+
+  decorations.forEach((decoration) => {
+    decoration.update({ mapMovingLeft, mapMovingRight, animationId });
   });
 
   // Tilesets
@@ -457,7 +494,7 @@ function animate() {
     });
   });
 
-  if (mapPosition >= 4275) player.win = true;
+  if (mapPosition >= 4428) player.win = true;
   player.update({ animationId, keys: playerKeys });
 }
 
