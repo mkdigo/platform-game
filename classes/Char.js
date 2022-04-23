@@ -257,6 +257,7 @@ export class Char {
       } else {
         this.isAttacking = false;
         this.isInvulnerable = false;
+        this.lastMove = '';
       }
 
       if (
